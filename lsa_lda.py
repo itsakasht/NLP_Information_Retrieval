@@ -23,16 +23,20 @@ class InformationRetrieval():
         self.docIDs = docIDs
 
     def rank_lsa(self, queries):
+        # Queries processed
         query_texts = [' '.join([' '.join(sent) for sent in query]) for query in queries]
 
+        # TF-IDF calculations
         self.vectorizer = TfidfVectorizer()
         self.tfidf_matrix = self.vectorizer.fit_transform(self.documents)
         query_matrix = self.vectorizer.transform(query_texts)
 
+        # LSA
         self.svd_model = TruncatedSVD(n_components=280, random_state=42)
         doc_lsa = self.svd_model.fit_transform(self.tfidf_matrix)
         query_lsa = self.svd_model.transform(query_matrix)
 
+        #Similarity calculations
         sims = cosine_similarity(query_lsa, doc_lsa)
         ranked_docs = np.argsort(-sims, axis=1)
 
@@ -41,14 +45,17 @@ class InformationRetrieval():
     def rank_lda(self, queries):
         query_texts = [' '.join([' '.join(sent) for sent in query]) for query in queries]
 
+        #Term frequency matrix computations
         count_vectorizer = CountVectorizer()
         self.count_matrix = count_vectorizer.fit_transform(self.documents)
         query_count = count_vectorizer.transform(query_texts)
 
+        #LDA
         self.lda_model = LatentDirichletAllocation(n_components=20, random_state=42)
         doc_lda = self.lda_model.fit_transform(self.count_matrix)
         query_lda = self.lda_model.transform(query_count)
 
+        #Similarity calculations
         sims = cosine_similarity(query_lda, doc_lda)
         ranked_docs = np.argsort(-sims, axis=1)
 
