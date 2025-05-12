@@ -154,7 +154,7 @@ class Evaluation():
 		meanRecall = -1
 
 		#Fill in code here
-		# Store the precision at k for each query
+		# Store the recall at k for each query
 		query_recall = []
 		qrels = build_qrels_dict(qrels)
 
@@ -176,7 +176,7 @@ class Evaluation():
 			recall_at_k = self.queryRecall(query_doc_IDs_ordered, query_id, list(relevant_docs.keys()), k)
 			query_recall.append(recall_at_k)
 
-		# Calculate the Mean Precision over all queries
+		# Calculate the Mean Recall over all queries
 		meanRecall = sum(query_recall) / len(query_recall) if query_recall else 0
 
 		return meanRecall
@@ -269,7 +269,7 @@ class Evaluation():
 			metric_at_k = self.queryFscore(query_doc_IDs_ordered, query_id, list(relevant_docs.keys()), k)
 			query_metric.append(metric_at_k)
 
-		# Calculate the Mean Precision over all queries
+		# Calculate the mean fscore over all queries
 		meanFscore = sum(query_metric) / len(query_metric) if query_metric else 0
 
 		return meanFscore
@@ -303,6 +303,7 @@ class Evaluation():
 		#Fill in code here
 		relevance = np.zeros(k)
 
+		#get the relevance of extracted documents
 		for i, doc_id in enumerate(query_doc_IDs_ordered[:k]):
 			relevance[i] = true_docs.get(doc_id, 0)
 
@@ -310,7 +311,8 @@ class Evaluation():
 
 		DCG = 0
 		IDCG = 0
-
+		
+		#Calculate DCG and IDCG
 		for i in range(k):
 			DCG += relevance[i]/math.log2(i+2)
 			IDCG += relevance_descending[i]/math.log2(i+2)
@@ -371,7 +373,7 @@ class Evaluation():
 			metric_at_k = self.queryNDCG(query_doc_IDs_ordered, query_id, relevant_docs, k)
 			query_metric.append(metric_at_k)
 
-		# Calculate the Mean Precision over all queries
+		# Calculate the Mean nDCG over all queries
 		meanNDCG = sum(query_metric) / len(query_metric) if query_metric else 0
 
 		return meanNDCG
@@ -464,7 +466,7 @@ class Evaluation():
 			metric_at_k = self.queryAveragePrecision(query_doc_IDs_ordered, query_id, list(relevant_docs.keys()), k)
 			query_metric.append(metric_at_k)
 
-		# Calculate the Mean Precision over all queries
+		# Calculate the Mean Average Precision over all queries
 		meanAveragePrecision = sum(query_metric) / len(query_metric) if query_metric else 0
 
 		return meanAveragePrecision
